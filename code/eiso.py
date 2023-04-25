@@ -19,7 +19,7 @@ def optimize_matrix_rows_to_states_iterative(O, states=None, alpha=1e-6, beta=1e
             norm: how to normalize the input O matrix. 'mean', 'max', 'min', or None for no normalization
 
         Outputs:
-            output: dictionary with output data
+            out: dictionary with output data
     """
 
     # Output dict
@@ -139,7 +139,7 @@ def optimize_matrix_rows_to_states(O, states=None, alpha=1e-6, beta=0.01, square
             norm: how to normalize the input O matrix. 'mean', 'max', 'min', or None for no normalization
 
         Outputs:
-            output: dictionary with output data
+            out: dictionary with output data
     """
 
     # State basis vectors to reconstruct

@@ -12,7 +12,7 @@ class ObservabilityMatrix:
                                     takes initial condition vector, time vector, & inputs as columns in array
                                     system_ode.simulate(x0, time, input)
                 t:                  time vector
-                x:                  state trajectory, where columns of array are the states
+                x:                  state trajectory, where columns are the states
                 u:                  inputs, where columns are each input
         """
         self.system = system  # system object, used to simulate measurements
@@ -67,7 +67,7 @@ class ObservabilityMatrix:
         O_time = O_index * np.array(self.dt)  # times to compute O
         n_point = len(O_index)  # # of times to calculate O
 
-        # Calculate O for each point on nominal trajectory
+        # Calculate O for each window on nominal trajectory
         O_all = []  # where to store the O's
         deltay_all = []  # where to store the O's
         for n in range(n_point):  # each point on trajectory
@@ -107,17 +107,15 @@ class ObservabilityMatrix:
                 twin:               simulation time
                 twin:               simulation inputs
                 eps:                amount to perturb initial state
-                measurement_type:   how to compute the measurement of the simulated system
-                                    'linear', 'divide_first_two_states', or 'multiply_first_two_states'
+                polar_mode:         if system object simualtor has polar mode, can set it here
 
             Outputs
                 O:                  numerically calculated observability matrix
                 deltay:             the difference in perturbed measurements at each time step
-                                    (basically O stored in a 3D array)
+                                    (basically un-normalized O stored in a 3D array)
         """
 
         # Calculate O
-        # dt = np.mean(np.diff(twin))
         self.w = len(twin)  # of points in time window
         delta = eps * np.eye(self.system.n)  # perturbation amount for each state
         deltay = np.zeros((self.system.p, self.system.n, self.w))  # preallocate deltay
@@ -143,10 +141,8 @@ class ObservabilityMatrix:
         O = np.zeros((1, self.system.n))  # make place holder 1st row
         for k in range(deltay.shape[2]):  # along 3rd dimension
             O = np.vstack((O, deltay[:, :, k]))  # stack
-
         O = O[1:, :]  # remove 1st row
-        # O = (dt ** 0.5) * O / (2 * eps)  # normalize by 2 times the perturbation amount & by the sampling time
-        O = O / (2 * eps)  # normalize by 2 times the perturbation amount & by the sampling time
+        O = O / (2 * eps)  # normalize by 2 times the perturbation amount
 
         return O, deltay
 
